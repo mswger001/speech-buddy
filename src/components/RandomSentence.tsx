@@ -20,7 +20,7 @@ const RandomSentence: React.FC<{
   transcript: string;
   setTranscript: (transcript: string) => void;
   // onStopRecording: (transcript: string) => void;
-}> = ({ transcript, setTranscript, onStopRecording }) => {
+}> = ({ transcript, setTranscript }) => {
   const [sentence, setSentence] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [localTranscript, setLocalTranscript] = useState<string>("");
