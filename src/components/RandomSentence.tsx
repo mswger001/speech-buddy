@@ -69,13 +69,13 @@ const RandomSentence: React.FC<{
     original: string,
     transcript: string
   ) => {
-    const prompt = `I tried to say: "${transcript}", but the intended sentence was: "${original}". Provide feedback on pronunciation differences and suggestions.`;
+    const prompt = `I tried to say: "${transcript}", but the intended sentence was: "${original}". Provide feedback on pronunciation differences and suggestions. make it short`;
 
     try {
       const result = await model.generateContent(prompt);
       const feedbackText = result.response.text(); // Accessing text directly
       setFeedback(feedbackText);
-      console.log(feedbackText);
+      //console.log(feedbackText);
     } catch (error) {
       console.error("Error getting feedback:", error);
     }
