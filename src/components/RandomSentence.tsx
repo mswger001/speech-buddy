@@ -19,7 +19,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const RandomSentence: React.FC<{
   transcript: string;
   setTranscript: (transcript: string) => void;
-  onStopRecording: (transcript: string) => void;
+  // onStopRecording: (transcript: string) => void;
 }> = ({ transcript, setTranscript, onStopRecording }) => {
   const [sentence, setSentence] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
