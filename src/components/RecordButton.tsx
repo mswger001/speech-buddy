@@ -54,11 +54,7 @@ const RecordButton: React.FC<{
       if (timeoutId) clearTimeout(timeoutId);
     };
 
-    recognition.onerror = (event: SpeechRecognitionError) => {
-      console.error("Error occurred in recognition: " + event.error);
-      setIsRecording(false);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
+
 
     if (isRecording) {
       recognition.start();

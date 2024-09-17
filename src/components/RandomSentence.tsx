@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai"; // Ensure correct import path
 
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+
+  interface SpeechRecognitionEvent extends Event {
+    results: SpeechRecognitionResultList;
+  }
+
+  interface SpeechRecognitionErrorEvent extends Event {
+    error: string;
+  }
+}
+
 const sentences: string[] = [
   "The cat is sitting on the mat.",
   "She took the wrong bus to work.",
@@ -111,7 +126,7 @@ const RandomSentence: React.FC<{
       if (timeoutId) clearTimeout(timeoutId);
     };
 
-    recognition.onerror = (event: SpeechRecognitionError) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error("Error occurred in recognition: " + event.error);
       setIsRecording(false);
       if (timeoutId) clearTimeout(timeoutId);
