@@ -72,11 +72,9 @@ const RandomSentence: React.FC<{
     const prompt = `I tried to say: "${transcript}", but the intended sentence was: "${original}". Provide feedback on pronunciation differences and suggestions. make it short`;
 
     try {
-      console.log(transcript);
       const result = await model.generateContent(prompt);
-      const feedbackText = result.response.text(); // Accessing text directly
+      const feedbackText = result.response.text; // Access text correctly
       setFeedback(feedbackText);
-      //console.log(feedbackText);
     } catch (error) {
       console.error("Error getting feedback:", error);
     }
@@ -112,18 +110,13 @@ const RandomSentence: React.FC<{
         .split(" ")
         .filter((word) => word).length;
       setWordCount(currentWordCount);
-
-      if (timeoutId) clearTimeout(timeoutId);
-      setTimeoutId(setTimeout(() => stopRecording(), 20000000000000000000000000000));
-
-      if (currentWordCount >= 5) {
-        stopRecording();
-      }
     };
 
     recognition.onend = () => {
       console.log("Recording stopped.");
       setIsRecording(false);
+      console.log(localTranscript);
+
       if (timeoutId) clearTimeout(timeoutId);
     };
 
@@ -137,6 +130,9 @@ const RandomSentence: React.FC<{
       recognition.start();
     } else {
       recognition.stop();
+      console.log(localTranscript);
+      // Call the feedback function with the latest transcript
+      getPronunciationFeedback(sentence, localTranscript);
     }
 
     return () => {
@@ -144,14 +140,6 @@ const RandomSentence: React.FC<{
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [isRecording]);
-
-  const stopRecording = () => {
-    setIsRecording(false);
-    if (timeoutId) clearTimeout(timeoutId);
-    console.log(sentence);
-    // onStopRecording(localTranscript); // Use local transcript to send to parent component
-    getPronunciationFeedback(sentence, localTranscript); // Get feedback on pronunciation
-  };
 
   return (
     <div>
@@ -175,11 +163,11 @@ const RandomSentence: React.FC<{
         <button className="btn" onClick={() => setIsRecording((prev) => !prev)}>
           {isRecording ? "Stop Recording" : "Start Recording"}
         </button>
+        <h3>Your Transcript:</h3>
+        <p>{localTranscript}</p>
       </div>
       {sentence && localTranscript && (
         <div className="feedback-section">
-          <h3>Your Transcript:</h3>
-          <p>{localTranscript}</p>
           {feedback && (
             <div>
               <h4>Feedback on Pronunciation:</h4>
