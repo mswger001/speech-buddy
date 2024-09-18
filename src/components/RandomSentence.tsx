@@ -72,6 +72,7 @@ const RandomSentence: React.FC<{
     const prompt = `I tried to say: "${transcript}", but the intended sentence was: "${original}". Provide feedback on pronunciation differences and suggestions. make it short`;
 
     try {
+      console.log(transcript);
       const result = await model.generateContent(prompt);
       const feedbackText = result.response.text(); // Accessing text directly
       setFeedback(feedbackText);
