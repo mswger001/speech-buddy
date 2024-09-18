@@ -114,7 +114,7 @@ const RandomSentence: React.FC<{
       setWordCount(currentWordCount);
 
       if (timeoutId) clearTimeout(timeoutId);
-      setTimeoutId(setTimeout(() => stopRecording(), 20000));
+      setTimeoutId(setTimeout(() => stopRecording(), 20000000000000000000000000000));
 
       if (currentWordCount >= 5) {
         stopRecording();
