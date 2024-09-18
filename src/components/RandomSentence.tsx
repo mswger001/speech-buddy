@@ -32,10 +32,8 @@ const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const RandomSentence: React.FC<{
-  transcript: string;
-  setTranscript: (transcript: string) => void;
   // onStopRecording: (transcript: string) => void;
-}> = ({ transcript, setTranscript }) => {
+}> = () => {
   const [sentence, setSentence] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [localTranscript, setLocalTranscript] = useState<string>("");
@@ -50,7 +48,7 @@ const RandomSentence: React.FC<{
       const result = await model.generateContent(prompt);
       const generatedSentence = result.response.text; // Accessing text directly
       setSentence(generatedSentence);
-      setTranscript(""); // Clear transcript on new sentence
+      setLocalTranscript(""); // Clear transcript on new sentence
     } catch (error) {
       console.error("Error generating content:", error);
     }
