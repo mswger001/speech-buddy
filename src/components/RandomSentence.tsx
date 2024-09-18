@@ -26,21 +26,16 @@ const sentences: string[] = [
   "They have completed the project successfully.",
 ];
 
-// Use environment variable for the API key
 const apiKey = "AIzaSyC4s6cd7CQG_tm0HcjJSbKgL3o7pwgA1-Y"; // Ensure to keep your API key secure
 const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const RandomSentence: React.FC<{
-  transcript: string;
-  setTranscript: (transcript: string) => void;
-  // onStopRecording: (transcript: string) => void;
-}> = ({ transcript, setTranscript }) => {
+const RandomSentence: React.FC<{}> = () => {
   const [sentence, setSentence] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [localTranscript, setLocalTranscript] = useState<string>("");
   const [wordCount, setWordCount] = useState<number>(0);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [transcript, setTranscript] = useState<string>("");
   const [feedback, setFeedback] = useState<string>(""); // For feedback on pronunciation
 
   const getRandomSentence = async () => {
@@ -50,6 +45,7 @@ const RandomSentence: React.FC<{
       const result = await model.generateContent(prompt);
       const generatedSentence = result.response.text; // Accessing text directly
       setSentence(generatedSentence);
+      setFeedback("");
       setTranscript(""); // Clear transcript on new sentence
     } catch (error) {
       console.error("Error generating content:", error);
@@ -76,7 +72,6 @@ const RandomSentence: React.FC<{
       const result = await model.generateContent(prompt);
       const feedbackText = result.response.text(); // Accessing text directly
       setFeedback(feedbackText);
-      //console.log(feedbackText);
     } catch (error) {
       console.error("Error getting feedback:", error);
     }
@@ -98,7 +93,7 @@ const RandomSentence: React.FC<{
     recognition.onstart = () => {
       console.log("Recording started...");
       setIsRecording(true);
-      setLocalTranscript("");
+      setTranscript("");
       setWordCount(0);
     };
 
@@ -106,31 +101,27 @@ const RandomSentence: React.FC<{
       const currentTranscript = Array.from(event.results)
         .map((result) => result[0].transcript)
         .join(" ");
-      setLocalTranscript(currentTranscript);
+      setTranscript(currentTranscript);
 
       const currentWordCount = currentTranscript
         .split(" ")
         .filter((word) => word).length;
       setWordCount(currentWordCount);
 
-      if (timeoutId) clearTimeout(timeoutId);
-      setTimeoutId(setTimeout(() => stopRecording(), 20000000000000000000000000000));
-
-      if (currentWordCount >= 5) {
-        stopRecording();
-      }
+      setLocalTranscript(currentTranscript);
     };
 
     recognition.onend = () => {
       console.log("Recording stopped.");
       setIsRecording(false);
-      if (timeoutId) clearTimeout(timeoutId);
+      setFeedback("");
+      getPronunciationFeedback(sentence, transcript);
+      // stopRecording();
     };
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error("Error occurred in recognition: " + event.error);
       setIsRecording(false);
-      if (timeoutId) clearTimeout(timeoutId);
     };
 
     if (isRecording) {
@@ -141,16 +132,13 @@ const RandomSentence: React.FC<{
 
     return () => {
       recognition.stop();
-      if (timeoutId) clearTimeout(timeoutId);
     };
   }, [isRecording]);
 
   const stopRecording = () => {
     setIsRecording(false);
-    if (timeoutId) clearTimeout(timeoutId);
     console.log(sentence);
-    // onStopRecording(localTranscript); // Use local transcript to send to parent component
-    getPronunciationFeedback(sentence, localTranscript); // Get feedback on pronunciation
+    // Get feedback on pronunciation
   };
 
   return (
@@ -175,11 +163,11 @@ const RandomSentence: React.FC<{
         <button className="btn" onClick={() => setIsRecording((prev) => !prev)}>
           {isRecording ? "Stop Recording" : "Start Recording"}
         </button>
+        <h3>Your Transcript:</h3>
+        <p>{transcript}</p>
       </div>
       {sentence && localTranscript && (
         <div className="feedback-section">
-          <h3>Your Transcript:</h3>
-          <p>{localTranscript}</p>
           {feedback && (
             <div>
               <h4>Feedback on Pronunciation:</h4>
