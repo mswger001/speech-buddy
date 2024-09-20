@@ -176,7 +176,7 @@ const RandomSentence: React.FC<{
     original: string,
     transcript: string
   ) => {
-    const prompt = `I tried to say: "${transcript}", but the intended sentence was: "${original}". Provide feedback on pronunciation differences and suggestions. make it short, ignore punctuation, try help how to pronounce each word not said right ignore capitals too, if the spellings are the same then say you are correct`;
+    const prompt = `I tried to say: "${transcript}", but the intended sentence was: "${original}". Provide feedback on pronunciation differences and suggestions. make it short, ignore punctuation, try help me on how to pronounce each word not said right ignore capitals too`;
 
     try {
       const result = await model.generateContent(prompt);
